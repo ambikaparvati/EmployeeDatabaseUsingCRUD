@@ -17,27 +17,6 @@ namespace EmployeeDatabaseCRUD.Models
 
         public EmployeesRepository()
         {
-            List<Employees> employees = new List<Employees>();
-
-            using (var cmd = new SqlCommand())
-            {
-                cmd.CommandText = "select * from Employee;";
-                cmd.Connection = GetOpenDataConnection();
-                Employees employee; // new Employee();
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    employee = new Employees();
-                    employee.ID = reader.GetInt32(0);
-                    employee.FirstName = reader.GetString(1);
-                    employee.LastName = reader.GetString(2);
-                    employee.Gender = reader.GetString(3);
-                    employee.Email = reader.GetString(4);
-                    employee.Status = reader.GetString(5);
-                    employees.Add(employee);
-                }
-                cmd.Connection.Close();
-            }
             //var connectionBuilder = new SqlConnectionStringBuilder();
             //connectionBuilder.DataSource = ".";
             //connectionBuilder.InitialCatalog = "EmployeesDetails";
