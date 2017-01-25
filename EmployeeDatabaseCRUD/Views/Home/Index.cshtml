@@ -1,0 +1,300 @@
+﻿<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+
+    //Load the students in the List and displays when the documnet is loaded
+    $(document).ready(function () {
+        jQuery.support.cors = true;
+        $.ajax({
+            url: '/api/employees',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                WriteResponses(data);
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+
+        //Displays in a Table
+        function WriteResponses(employees) {
+            var strResult;
+            if (employees == null) {
+                strResult = "No employees found! Please add below.";
+            } else {
+                strResult = "<table cellpadding=\"7\"><th>ID</th><th>First Name</th><th>Last Name</th><th>Gender</th><th>E-mail</th><th>Status</th>";
+                $.each(employees, function (index, employee) {
+                    strResult += "<tr><td>" + employee.ID + "</td><td> " + employee.FirstName + "</td><td>" + employee.LastName + "</td><td>" + employee.Gender + "</td><td>" + employee.Email + "</td><td>" + employee.Status + "</td></tr>";
+                });
+                strResult += "</table>";
+            }
+            $("#divResult").html(strResult);
+        }
+    });
+
+    function updateVisibility() {
+        document.getElementById('updateBody').style.visibility = "visible";
+    }
+        
+    //Get a Particular Student based on ID
+    function GetEmployees() {
+        jQuery.support.cors = true;
+        $.ajax({
+            url: 'http://localhost:35518/api/employees/' + document.getElementById('inputID').value,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                WriteResponse(data);
+            },
+            error: function (x, y, z) {
+                alert('The employee not found in the List for the given ID');
+            }
+        });
+
+        function WriteResponse(employee) {
+            document.getElementById('ID').innerHTML = "" + employee.ID + "";
+            document.getElementById('FirstName').innerHTML = "" + employee.FirstName + "";
+            document.getElementById('LastName').innerHTML = "" + employee.LastName + "";
+            document.getElementById('Gender').innerHTML = "" + employee.Gender + "";
+            document.getElementById('Email').innerHTML = "" + employee.Email + "";
+            document.getElementById('Status').innerHTML = "" + employee.Status + "";
+        }
+    }
+
+    //Adds a Student to the List
+    function AddEmployees() {
+        var employees = {
+            ID: document.getElementById('newID').value,
+            FirstName: document.getElementById('newFirstName').value,
+            LastName: document.getElementById('newLastName').value,
+            Gender: document.getElementById('newGender').value,
+            Email: document.getElementById('newEmail').value,
+            Status: document.getElementById('newStatus').value
+        };
+
+        $.ajax({
+            url: 'http://localhost:35518/api/employees/',
+            type: 'POST',
+            data: JSON.stringify(employees),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                alert('Employee added Successfully');
+                GetAllEmployees();
+            },
+            error: function () {
+                alert('Employee not Added');
+            }
+        });
+    }
+
+    //Updates the student Details in the List
+    function PutEmployees() {
+        var employees = {
+            ID: document.getElementById('inputID').value,
+            FirstName: document.getElementById('putFirstName').value,
+            LastName: document.getElementById('putLastName').value,
+            Gender: document.getElementById('putGender').value,
+            Email: document.getElementById('Email').innerHTML,
+            Status: document.getElementById('putStatus').value
+        };
+
+        document.getElementById('updateBody').style.visibility = "hidden";
+
+        $.ajax({
+            url: 'http://localhost:35518/api/employees/' + document.getElementById('inputID').value,
+            type: 'PUT',
+            data: JSON.stringify(employees),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                alert('Details Updated Successfully');
+                GetAllEmployees();
+            },
+            error: function () {
+                alert('Unable to Update for the Given ID');
+            }
+        });
+    }
+
+    function DeleteEmployees() {
+        jQuery.support.cors = true;
+        $.ajax({
+            url: 'http://localhost:35518/api/employees/' + document.getElementById('inputID').value,
+            type: 'DELETE',
+            dataType: 'json',
+            success: function (data) {
+                alert('Employee deleted successfully');
+                GetAllEmployees();
+            },
+            error: function (x, y, z) {
+                alert('Employee Not found for the Given ID');
+            }
+        });
+    }
+
+    function GetAllEmployees() {
+        jQuery.support.cors = true;
+        $.ajax({
+            url: 'http://localhost:35518/api/employees',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                WriteResponses(data);
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
+        });
+
+        //Displays in a Table
+        function WriteResponses(employees) {
+            var strResult;
+            if (employees == null) {
+                strResult = "No employees found! Please add below.";
+            } else {
+                strResult = "<table cellpadding=\"7\"><th>ID</th><th>First Name</th><th>Last Name</th><th>Gender</th><th>E-mail</th><th>Status</th>";
+                $.each(employees, function (index, employee) {
+                    strResult += "<tr><td>" + employee.ID + "</td><td> " + employee.FirstName + "</td><td>" + employee.LastName + "</td><td>" + employee.Gender + "</td><td>" + employee.Email + "</td><td>" + employee.Status + "</td></tr>";
+                });
+                strResult += "</table>";
+            }
+            $("#divResult").html(strResult);
+        }
+    }
+
+</script>
+<center>
+    <h1 style="color: #f00">List of Employees </h1>
+    <div id="divResult" style="margin-left: 15px"></div>
+</center>
+<hr style="display: block;
+    border-style: inset;
+    border-color: #f00"/>
+
+<div style="margin-left: 15px; float:left">
+    <h1 style="color: #f00">Get a Employee </h1>
+
+    Enter the ID:
+    <input id="inputID" type="text" /><br /><br />
+    <button id="GetEmployees" onclick="GetEmployees()">Get Emplpoyee</button>
+
+    <table cellpadding="3">
+        <tr>
+            <td>ID</td>
+            <td><span id="ID"></span></td>
+        </tr>
+        <tr>
+            <td>First Name</td>
+            <td><span id="FirstName"></span></td>
+        </tr>
+        <tr>
+            <td>Last Name</td>
+            <td><span id="LastName"></span></td>
+        </tr>
+        <tr>
+            <td>Gender</td>
+            <td><span id="Gender"></span></td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td><span id="Email"></span></td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td><span id="Status"></span></td>
+        </tr>
+        <tr>
+            <td><button onclick="updateVisibility()">Update?</button></td>
+            <td><button id="deleteEmployees" onclick="DeleteEmployees()">Delete?</button></td>
+        </tr>
+    </table>
+</div>
+<div id="updateBody" style="margin-left: 500px; visibility:hidden ">
+    <br />
+    <h1 style="color: #f00">Update this Employee </h1>
+    <table cellpadding="3" style="margin-left: 15px">
+        <tr>
+            <td colspan="2">Enter new details</td>
+        </tr>
+        <tr>
+            <td><span>First Name</span></td>
+            <td><input id="putFirstName" type="text" /></td>
+        </tr>
+        <tr>
+            <td><span>Last Name</span></td>
+            <td><input id="putLastName" type="text" /></td>
+        </tr>
+        <tr>
+            <td><span>Gender</span></td>
+            <td><select id="putGender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><span>Email cannot be updated!</span></td>
+        </tr>
+        <tr>
+            <td><span>Status</span></td>
+            <td>
+                <select id="putStatus">
+                    <option value="Activated">Activated</option>
+                    <option value="Deactivated">Deactivated</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                    <button id="putEmployees" onclick="PutEmployees()">Update Employee</button>
+            </td>
+        </tr>
+    </table>
+</div>
+<br style="clear: left" /><br />
+<hr style="display: block;
+    border-style: inset;
+    border-color: #f00;" />
+<div>
+    <h1 style="color: #f00">Add an Employee </h1>
+    <table cellpadding="3" style="margin-left: 15px">
+        <tr>
+            <td><span>ID</span></td>
+            <td><input id="newID" type="number" /></td>
+        </tr>
+        <tr>
+            <td><span>First Name</span></td>
+            <td><input id="newFirstName" type="text" /></td>
+        </tr>
+        <tr>
+            <td><span>Last Name</span></td>
+            <td><input id="newLastName" type="text" /></td>
+        </tr>
+        <tr>
+            <td><span>Gender</span></td>
+            <td><select id="newGender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><span>Email</span></td>
+            <td>
+                <input id="newEmail" type="text" />
+            </td>
+        </tr>
+        <tr>
+            <td><span>Status</span></td>
+            <td><select id="newStatus">
+                    <option value="Activated">Activated</option>
+                    <option value="Deactivated">Deactivated</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="postEmployees" onclick="AddEmployees()">Add New Employee</button>
+            </td>
+        </tr>
+    </table>
+</div>
